@@ -19,6 +19,8 @@ License: MIT License https://opensource.org/licenses/MIT
 // error information
 extern int errno;
 
+int globe = 2;
+
 
 // get_seconds returns the number of seconds since the
 // beginning of the day, with microsecond precision
@@ -45,6 +47,10 @@ int main(int argc, char *argv[])
     pid_t pid;
     double start, stop;
     int i, num_children;
+
+    printf("%s %d \n","Global variable is ", globe);
+    int* y = malloc(sizeof(int));
+    printf("%s %d \n","Dynaimc/heap variable is ", *y);
 
     // the first command-line argument is the name of the executable.
     // if there is a second, it is the number of children to create.
@@ -73,6 +79,13 @@ int main(int argc, char *argv[])
         /* see if we're the parent or the child */
         if (pid == 0) {
             child_code(i);
+            *y =4;
+            globe = 3;
+            int s =1;
+            char* stat = "hello";
+            printf("%s %d \n","The global variable: ", globe);
+            printf("%s %d \n","The dynamic/heap variable: ", *y);
+            printf("%s %d \n","The stack(local) variable: ", s);
             exit(i);
         }
     }
@@ -94,8 +107,18 @@ int main(int argc, char *argv[])
         printf("Child %d exited with error code %d.\n", pid, status);
     }
     // compute the elapsed time
+
+    //s =2;// cannot be changed. Not defined in parent process
+
     stop = get_seconds();
     printf("Elapsed time = %f seconds.\n", stop - start);
+    printf("%s %d \n","The global variable: ", globe); //global variable not changed
+    printf("%s %d \n","The dynamic/heap variable: ", *y);//heap not changed
+    //printf("%s %d \n","The stack(local) variable: ", s);
+    //printf("%s %s \n","The static variable: ", stat);
+    //s and status not printed as they are defined in chold, not parent process.
 
-    exit(0);
+      exit(0);
 }
+//child and parent processes do not share global, stack, static or heap memory.
+//they are two different processes.
